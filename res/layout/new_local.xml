@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+<EditText
+        android:id="@+id/new_coordx"
+        android:hint="新Coord_x"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <EditText
+            android:id="@+id/new_coordy"
+            android:hint="新Coord_y"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <EditText
+            android:id="@+id/new_address"
+            android:hint="新Address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+</LinearLayout>

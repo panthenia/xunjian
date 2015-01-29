@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="XBeaconSdk">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/XBeaconSdk.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../开发/beacon/xbeaconSdk" />
+    </SOURCES>
+  </library>
+</component>

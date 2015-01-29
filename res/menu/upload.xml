@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.p.xunjian.Activity.MainActivity"
+        >
+    <item android:id="@+id/action_upload"
+          android:title="@string/upload"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_unupload"
+          android:title="@string/unupload"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_clearupload"
+          android:title="@string/clear_upload"
+          android:showAsAction="never"
+            />
+</menu>

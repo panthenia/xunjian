@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.p.xunjian"
+          android:versionCode="1"
+          android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="18"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-feature
+            android:name="android.hardware.bluetooth_le"
+            android:required="true" />
+    <application
+            android:label="@string/app_name"
+            android:name="com.p.xunjian.DataType.PublicData"
+            android:icon="@drawable/earthscan">
+        <activity
+                android:theme="@android:style/Theme.Holo.Light"
+                android:screenOrientation="portrait"
+                android:name=".Activity.LoginActivity"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activity.MainActivity"
+                    android:theme="@android:style/Theme.Holo.Light"
+                />
+        <activity android:name=".Activity.NetworkActivity"
+                android:theme="@android:style/Theme.Holo.Light"
+                />
+
+        <service android:name="com.p.xunjian.Util.NetWorkService"/>
+        <!-- sdk服务 -->
+        <service android:name="com.lef.ibeacon.service.UpdateService" />
+        <service
+                android:name="com.lef.ibeacon.service.IBeaconService"
+                android:enabled="true"
+                android:exported="true"
+                android:isolatedProcess="false"
+                android:label="iBeacon" >
+        </service>
+        <service
+                android:name="com.lef.ibeacon.IBeaconIntentProcessor"
+                android:enabled="true" >
+            <meta-data
+                    android:name="background"
+                    android:value="true" />
+
+            <intent-filter android:priority="1" >
+                <action android:name="com.lef.ibeacon.DID_RANGING" />
+                <action android:name="com.lef.ibeacon.DID_MONITORING" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

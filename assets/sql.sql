@@ -1,0 +1,3 @@
+
+CREATE TABLE [beacon] ([mac_id] varchar(40) NOT NULL,  [uuid] varchar(40) NOT NULL,  [major] varchar(11) NOT NULL,  [minor] varchar(11) NOT NULL,  [building] varchar(40) NOT NULL, [floor] varchar(40) NOT NULL,  [coord_x] varchar(10) NOT NULL,  [coord_y] varchar(10) NOT NULL,  [coverage] varchar(40) ,  [power] varchar(20) ,[frequency] varchar(20) ,  [temperaturefrequency] varchar(20) ,  [lightfrequency] varchar(20) ,  [type] varchar(40) ,  [firm] varchar(100) ,  [create_id] varchar(20) ,  [company_id] varchar(20) ,  [accelerate] varchar(20) ,  [create_time] varchar(20) , [last_modify_id] varchar(20) ,  [last_modify_time] varchar(20),[address] varchar(1000),[status] varchar(20) );
+

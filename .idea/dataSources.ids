@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="NEWBEACONDEPOY902" uuid="f7342f5b-c48b-481f-9aad-3a53930e0680">
+    <database-info product="SQLite" version="3.7.6.3" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native"/>
+    <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed"/>
+    <schema name="" catalog=""/>
+    <table name="android_metadata" schema="" catalog="" type="TABLE">
+      <column name="locale" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+    </table>
+    <table name="beacon" schema="" catalog="" type="TABLE">
+      <column name="mac_id" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="uuid" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="major" sqlType="VARCHAR(11)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="minor" sqlType="VARCHAR(11)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="building" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="floor" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="coord_x" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="coord_y" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="coverage" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="power" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="frequency" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="temperaturefrequency" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="lightfrequency" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="type" sqlType="VARCHAR(40)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="firm" sqlType="VARCHAR(100)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="create_id" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="company_id" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="accelerate" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="create_time" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="last_modify_id" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="last_modify_time" sqlType="VARCHAR(20)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="address" sqlType="VARCHAR(1000)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+    </table>
+  </data-source>
+</component>
