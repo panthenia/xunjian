@@ -48,6 +48,8 @@ public class MainActivity extends Activity implements
     public static final int REQUEST_FINISH_SUCCESS = 2;
     public static final int KEY_TIME_OUT = 4;
     public static final int REQUEST_FINISH_FAIL = 3;
+    public static final int UPLOAD_WAIT_SUCCESS = 5;
+    public static final int UPLOAD_WAIT_FAIL = 6;
     private Button btWait,btAround,btChecked;
     private ProgressDialog pro_dialog;
     private IBeaconManager iBeaconManager;
@@ -71,11 +73,32 @@ public class MainActivity extends Activity implements
                     aroundAdapter.notifyDataSetChanged();
                     break;
                 case REQUEST_FINISH_FAIL:
+                    Toast.makeText(MainActivity.this, "巡检数据上报失败！", Toast.LENGTH_LONG);
+                    break;
+                case KEY_TIME_OUT:
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("巡检数据上报失败！")
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setMessage("请检查网络连接！")
+                            .setPositiveButton("登录超时，请重新登录!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    finish();
+                                }
+                            })
                             .create().show();
+                    break;
+                case UPLOAD_WAIT_SUCCESS:
+                    Toast.makeText(MainActivity.this,"未巡检数据上报成功！",Toast.LENGTH_LONG);
+                    PublicData.getInstance().checkedBeaconDataList.addAll(PublicData.getInstance().waitBeaconDataList);
+                    PublicData.getInstance().waitBeaconDataList.clear();
+                    if(showType == WAIT)
+                        onWaitBeaconClick(btWait);
+                    break;
+                case UPLOAD_WAIT_FAIL:
+                    Toast.makeText(MainActivity.this,"未巡检数据上报失败！",Toast.LENGTH_LONG);
+
                     break;
                 default:
                     break;
@@ -248,6 +271,17 @@ public class MainActivity extends Activity implements
                         break;
                 }
                 Toast.makeText(this,"状态已重置",Toast.LENGTH_SHORT);
+                return true;
+            case R.id.action_unupload:
+                if(PublicData.getInstance().isNetworkAvailable()) {
+                    Intent intent = new Intent(MainActivity.this, NetWorkService.class);
+                    intent.putExtra("ActivityName", MainActivity.class.getName());
+                    intent.putExtra("ReuqestType", "upload_wait");
+                    startService(intent);
+                    Toast.makeText(this, "开始上传...", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "当前无网络连接！", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,6 +1,10 @@
 package com.p.xunjian.DataType;
 
 import com.lef.scanner.IBeacon;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.jar.JarException;
 
 /**
  * Created by p on 2015/1/23.
@@ -99,4 +103,5 @@ public class DBIbeancon extends IBeacon {
     }
 
     public String floor = "";
+
 }

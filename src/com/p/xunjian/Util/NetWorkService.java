@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -30,12 +31,13 @@ import java.util.Date;
  * Created by p on 2014/12/15.
  */
 public class NetWorkService extends IntentService {
-    private static final String LOGIN_URL = "http://"+PublicData.getInstance().getIp()+":"+PublicData.getInstance().getPort()+"/beacon/patrol!login";
-    private static final String UPLOAD_URL = "http://"+PublicData.getInstance().getIp()+":"+PublicData.getInstance().getPort()+"/beacon/patrol!report";
+    private static final String LOGIN_URL = "http://" + PublicData.getInstance().getIp() + ":" + PublicData.getInstance().getPort() + "/beacon/patrol!login";
+    private static final String UPLOAD_URL = "http://" + PublicData.getInstance().getIp() + ":" + PublicData.getInstance().getPort() + "/beacon/patrol!report";
 
-    public NetWorkService(){
+    public NetWorkService() {
         super("NetWorkService");
     }
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -53,10 +55,11 @@ public class NetWorkService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(this.getClass().getName(),"onStartCommand");
+        Log.d(this.getClass().getName(), "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
-    private String doRequest(URL url,String sdata,Handler handler){
+
+    private String doRequest(URL url, String sdata, Handler handler) {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -106,57 +109,58 @@ public class NetWorkService extends IntentService {
         }
         return result;
     }
+
     @Override
-    protected void onHandleIntent(Intent intent)  {
+    protected void onHandleIntent(Intent intent) {
         Handler ahandler;
         URL url;
-        Log.d(getClass().getName(),"into onHandleIntent");
+        Log.d(getClass().getName(), "into onHandleIntent");
         PublicData publicData = PublicData.getInstance();
-        SimpleDateFormat formatter  =  new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String current_time = formatter.format(new Date(System.currentTimeMillis()));//获取当前时间
-        if(intent.hasExtra("ActivityName")){
+        if (intent.hasExtra("ActivityName")) {
             ahandler = PublicData.getInstance().getHandlerHashMap().get(intent.getStringExtra("ActivityName"));
             Message message = new Message();
-            if(intent.hasExtra("ReuqestType")){
-                String rtype=  intent.getStringExtra("ReuqestType");
-                if(rtype.contains("upload_checked")){
+            if (intent.hasExtra("ReuqestType")) {
+                String rtype = intent.getStringExtra("ReuqestType");
+                if (rtype.contains("upload_checked")) {
                     try {
                         url = new URL(UPLOAD_URL);
-                        String data ;
+                        String data;
                         JSONArray jsonArray = new JSONArray();
                         ArrayList<DBIbeancon> upBeacons = publicData.getCheckedBeaconInDb();
-                        for(DBIbeancon ibeacon : upBeacons){
+                        for (DBIbeancon ibeacon : upBeacons) {
                             JSONObject jsonObject = new JSONObject();
-                            
-                            jsonObject.put("mac",ibeacon.getBluetoothAddress());
-                            jsonObject.put("major",String.valueOf(ibeacon.getMajor()));
-                            jsonObject.put("minor",String.valueOf(ibeacon.getMinor()));
-                            jsonObject.put("rssi",String.valueOf(ibeacon.getRssi()));
-                            jsonObject.put("uuid",ibeacon.getUuid());
-                            jsonObject.put("id",publicData.getImei());
-                            jsonObject.put("time",current_time);
-                            jsonObject.put("building",ibeacon.getBuilding());
-                            jsonObject.put("floor",ibeacon.getFloor());
-                            jsonObject.put("coord_x",ibeacon.getCoordx());
-                            jsonObject.put("coord_y",ibeacon.getCoordy());
-                            jsonObject.put("address",ibeacon.getAddress());
-                            jsonObject.put("latitude","");
-                            jsonObject.put("longitude","");
-                            if(publicData.dbBeaconDataList.contains(ibeacon.getBluetoothAddress())){
-                                jsonObject.put("type","2");
-                            }else jsonObject.put("type","3");
-                            jsonObject.put("status","1");
+
+                            jsonObject.put("mac", ibeacon.getBluetoothAddress());
+                            jsonObject.put("major", String.valueOf(ibeacon.getMajor()));
+                            jsonObject.put("minor", String.valueOf(ibeacon.getMinor()));
+                            jsonObject.put("rssi", String.valueOf(ibeacon.getRssi()));
+                            jsonObject.put("uuid", ibeacon.getUuid());
+                            jsonObject.put("id", publicData.getImei());
+                            jsonObject.put("time", current_time);
+                            jsonObject.put("building", ibeacon.getBuilding());
+                            jsonObject.put("floor", ibeacon.getFloor());
+                            jsonObject.put("coord_x", ibeacon.getCoordx());
+                            jsonObject.put("coord_y", ibeacon.getCoordy());
+                            jsonObject.put("address", ibeacon.getAddress());
+                            jsonObject.put("latitude", "");
+                            jsonObject.put("longitude", "");
+                            if (publicData.dbBeaconDataList.contains(ibeacon.getBluetoothAddress())) {
+                                jsonObject.put("type", "2");
+                            } else jsonObject.put("type", "3");
+                            jsonObject.put("status", "1");
                             jsonArray.put(jsonObject);
                         }
                         JSONObject finalJson = new JSONObject();
-                        finalJson.put("type",1);
-                        finalJson.put("data",jsonArray);
-                        finalJson.put("user_id",publicData.getUser());
-                        finalJson.put("key",publicData.getKey());
-                        data = "jsonstr="+finalJson.toString();
-                        Log.d(getClass().getName(),data);
-                        String upresult = doRequest(url, data,ahandler);
-                        Log.d(getClass().getName(),upresult);
+                        finalJson.put("type", 1);
+                        finalJson.put("data", jsonArray);
+                        finalJson.put("user_id", publicData.getUser());
+                        finalJson.put("key", publicData.getKey());
+                        data = "jsonstr=" + finalJson.toString();
+                        Log.d(getClass().getName(), data);
+                        String upresult = doRequest(url, data, ahandler);
+                        Log.d(getClass().getName(), upresult);
 
                         //通过上传返回的结果判断后续操作
                        /*
@@ -166,7 +170,7 @@ public class NetWorkService extends IntentService {
                        * */
                         JSONObject rejson = new JSONObject(upresult);
                         Message msg = new Message();
-                        if(rejson.getString("success").contains("true")) {
+                        if (rejson.getString("success").contains("true")) {
                             //成功，更新界面数据,同时创建插入已上传的sql
                             String uploaded_beacon_sql = "insert into uploaded values ";
                             for (DBIbeancon ibeancon : upBeacons) {
@@ -181,11 +185,11 @@ public class NetWorkService extends IntentService {
 
                             msg.what = MainActivity.REQUEST_FINISH_SUCCESS;
                             ahandler.sendMessage(msg);
-                        }else {
-                            if(rejson.getString("message").contains("数据格式错误")){
+                        } else {
+                            if (rejson.getString("message").contains("数据格式错误")) {
                                 msg.what = MainActivity.REQUEST_FINISH_FAIL;
                                 ahandler.sendMessage(msg);
-                            }else if(rejson.getString("message").contains("key_time_out")){
+                            } else if (rejson.getString("message").contains("key_time_out")) {
                                 msg.what = MainActivity.KEY_TIME_OUT;
                                 ahandler.sendMessage(msg);
                             }
@@ -198,28 +202,27 @@ public class NetWorkService extends IntentService {
                         e.printStackTrace();
                     }
 
-                }else if(rtype.contains("login")){//登录
+                } else if (rtype.contains("login")) {//登录
                     String id = PublicData.getInstance().getUser();
                     String psw = PublicData.getInstance().getPsw();
-                    String data = String.format("user_id=%s&pwd=%s",id,PublicData.getInstance().getMd5(psw));
+                    String data = String.format("user_id=%s&pwd=%s", id, PublicData.getInstance().getMd5(psw));
                     String login_result = null;
                     try {
                         URL url1 = new URL(LOGIN_URL);
-                        login_result = doRequest(url1,data,ahandler);
-                        Log.d(getClass().getName(),login_result);
+                        login_result = doRequest(url1, data, ahandler);
+                        Log.d(getClass().getName(), login_result);
                         JSONObject ljson = new JSONObject(login_result);
-                        if(ljson.getString("success").contains("true")){
+                        if (ljson.getString("success").contains("true")) {
                             PublicData.getInstance().setKey(ljson.getString("key"));
                             message.what = LoginActivity.LOGIN_SUCCESS;
-                        }else{
-                            if(ljson.getString("message").contains("此用户已登陆")) {
+                        } else {
+                            if (ljson.getString("message").contains("此用户已登陆")) {
                                 message.what = LoginActivity.LOGIN_FAIL_ALREADY_LOGIN;
-                                }
-                            else if(ljson.getString("message").contains("不存在")){
+                            } else if (ljson.getString("message").contains("不存在")) {
                                 message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT;
-                            }else if(ljson.getString("message").contains("错误")){
+                            } else if (ljson.getString("message").contains("错误")) {
                                 message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT_AND_PSW;
-                            }else {
+                            } else {
                                 message.what = LoginActivity.SERVER_ERR;
                             }
                         }
@@ -231,7 +234,85 @@ public class NetWorkService extends IntentService {
                         ahandler.sendMessage(message);
                         e.printStackTrace();
                     }
+                } else if (rtype.contains("upload_wait")) {
+                    try {
+                        url = new URL(UPLOAD_URL);
+                        String data;
+                        JSONArray jsonArray = new JSONArray();
+                        ArrayList<DBIbeancon> upBeacons = publicData.getWaitBeaconData();
+                        for (DBIbeancon ibeacon : upBeacons) {
+                            JSONObject jsonObject = new JSONObject();
+
+                            jsonObject.put("mac", ibeacon.getBluetoothAddress());
+                            jsonObject.put("major", String.valueOf(ibeacon.getMajor()));
+                            jsonObject.put("minor", String.valueOf(ibeacon.getMinor()));
+                            jsonObject.put("rssi", String.valueOf(ibeacon.getRssi()));
+                            jsonObject.put("uuid", ibeacon.getUuid());
+                            jsonObject.put("id", publicData.getImei());
+                            jsonObject.put("time", current_time);
+                            jsonObject.put("building", ibeacon.getBuilding());
+                            jsonObject.put("floor", ibeacon.getFloor());
+                            jsonObject.put("coord_x", ibeacon.getCoordx());
+                            jsonObject.put("coord_y", ibeacon.getCoordy());
+                            jsonObject.put("address", ibeacon.getAddress());
+                            jsonObject.put("latitude", "");
+                            jsonObject.put("longitude", "");
+                            jsonObject.put("type", "1");
+                            jsonObject.put("status", "1");
+                            jsonArray.put(jsonObject);
+                        }
+                        JSONObject finalJson = new JSONObject();
+                        finalJson.put("type", 1);
+                        finalJson.put("data", jsonArray);
+                        finalJson.put("user_id", publicData.getUser());
+                        finalJson.put("key", publicData.getKey());
+                        data = "jsonstr=" + finalJson.toString();
+                        Log.d(getClass().getName(), data);
+                        String upresult = doRequest(url, data, ahandler);
+                        Log.d(getClass().getName(), upresult);
+
+                        //通过上传返回的结果判断后续操作
+                       /*
+                       * 上报成功，1更新UI，2存储已上报的beacon到数据库，3删除数据库中未上报的beacon；
+                       * 上报失败，1UI提示上报失败。
+                       *
+                       * */
+                        JSONObject rejson = new JSONObject(upresult);
+                        Message msg = new Message();
+                        if (rejson.getString("success").contains("true")) {
+                            //成功，更新界面数据,同时创建插入已上传的sql
+                            String uploaded_beacon_sql = "insert into uploaded values ";
+                            for (DBIbeancon ibeancon : upBeacons) {
+                                publicData.uploadBeaconSet.add(ibeancon.getBluetoothAddress());
+                                uploaded_beacon_sql += "('" + ibeancon.getBluetoothAddress() + "'),";
+                            }
+                            uploaded_beacon_sql = uploaded_beacon_sql.substring(0, uploaded_beacon_sql.length() - 1);
+                            uploaded_beacon_sql += ";";
+                            Log.d(getClass().getName(), uploaded_beacon_sql);
+                            //保存已上报的beacon mac 到数据库
+                            publicData.saveUploadedBeacon2Db(uploaded_beacon_sql);
+
+                            msg.what = MainActivity.UPLOAD_WAIT_SUCCESS;
+                            ahandler.sendMessage(msg);
+                        } else {
+                            if (rejson.getString("message").contains("数据格式错误")) {
+                                msg.what = MainActivity.UPLOAD_WAIT_FAIL;
+                                ahandler.sendMessage(msg);
+                            } else if (rejson.getString("message").contains("key_time_out")) {
+                                msg.what = MainActivity.KEY_TIME_OUT;
+                                ahandler.sendMessage(msg);
+                            }
+                        }
+
+
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
+
             }
         }
 

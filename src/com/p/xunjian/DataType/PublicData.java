@@ -152,6 +152,14 @@ public class PublicData extends Application {
             return beaconAddressMap.get(beacon.getBluetoothAddress()) == null ? "未知" : beaconAddressMap.get(beacon.getBluetoothAddress());
         }
     }
+    public ArrayList<DBIbeancon> getWaitBeaconData(){
+        ArrayList<DBIbeancon> dbIbeancons = new ArrayList<DBIbeancon>();
+        for(IBeacon iBeacon : waitBeaconDataList){
+            DBIbeancon dbIbeancon = (DBIbeancon)iBeacon;
+            dbIbeancons.add(dbIbeancon);
+        }
+        return dbIbeancons;
+    }
     public void saveBeaconAddress(IBeacon iBeacon,String x,String y,String ad){
         String sql = String.format("update unupbeacon set coord_x='%s',coord_y='%s',address='%s' where mac_id='%s'",x,y,ad,iBeacon.getBluetoothAddress());
         SQLiteDatabase db = du.getReadableDatabase();
@@ -166,7 +174,6 @@ public class PublicData extends Application {
         }
     }
     /**
-     * 获取部署的beacon信息，数据库由于要下载，放在assets目录下
      */
     public void getDeployedBeaconInAssestsDb() {
         /*AssetsDatabaseManager.initManager(myself);
@@ -214,7 +221,7 @@ public class PublicData extends Application {
      * @param mac
      */
     public void add2WaitList(String mac){
-        IBeacon beacon = dbBeaconMap.get(mac);
+        DBIbeancon beacon = dbBeaconMap.get(mac);
         if(beacon != null)
             waitBeaconDataList.add(beacon);
     }
