@@ -215,21 +215,24 @@ public class NetWorkService extends IntentService {
                         URL url1 = new URL(LOGIN_URL);
                         login_result = doRequest(url1, data, ahandler);
                         Log.d(getClass().getName(), login_result);
-                        JSONObject ljson = new JSONObject(login_result);
-                        if (ljson.getString("success").contains("true")) {
-                            PublicData.getInstance().setKey(ljson.getString("key"));
-                            message.what = LoginActivity.LOGIN_SUCCESS;
-                        } else {
-                            if (ljson.getString("message").contains("此用户已登陆")) {
-                                message.what = LoginActivity.LOGIN_FAIL_ALREADY_LOGIN;
-                            } else if (ljson.getString("message").contains("不存在")) {
-                                message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT;
-                            } else if (ljson.getString("message").contains("错误")) {
-                                message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT_AND_PSW;
+                        JSONObject ljson = null;
+                        ljson = new JSONObject(login_result);
+                        if(ljson != null) {
+                            if (ljson.getString("success").contains("true")) {
+                                PublicData.getInstance().setKey(ljson.getString("key"));
+                                message.what = LoginActivity.LOGIN_SUCCESS;
                             } else {
-                                message.what = LoginActivity.SERVER_ERR;
+                                if (ljson.getString("message").contains("此用户已登陆")) {
+                                    message.what = LoginActivity.LOGIN_FAIL_ALREADY_LOGIN;
+                                } else if (ljson.getString("message").contains("不存在")) {
+                                    message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT;
+                                } else if (ljson.getString("message").contains("错误")) {
+                                    message.what = LoginActivity.LOGIN_FAIL_NO_ACCOUNT_AND_PSW;
+                                } else {
+                                    message.what = LoginActivity.SERVER_ERR;
+                                }
                             }
-                        }
+                        }else message.what = LoginActivity.SERVER_ERR;
                         ahandler.sendMessage(message);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();

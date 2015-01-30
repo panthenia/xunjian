@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">巡检工具</string>
-    <string name="get_db_beacon">select mac_id,major,minor,building,floor,address,coord_x,coord_y,uuid from beacon; </string>
+    <string name="get_db_beacon">select mac_id,major,minor,building,floor,address,coord_x,coord_y,uuid,status from beacon; </string>
     <string name="upload">上报巡检到的Beacon</string>
     <string name="unupload">上报未正常巡检到的Beacon</string>
     <string name="create_unupload_beacon_table">create table if not exists unupbeacon

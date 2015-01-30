@@ -8,6 +8,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,6 +17,8 @@ import com.lz.map.FloatView;
 import com.p.xunjian.R;
 import com.wxq.draw.MapControler;
 import com.wxq.draw.MapLayout;
+
+import java.util.Vector;
 
 /**
  * Created by p on 2015/1/29.
@@ -79,12 +83,9 @@ public class MapActivity extends Activity {
             if (mapLayout == null || !mapLayout.isSuccess()){
                 finish();
             }
-            mapLayout.changedbmap(getBuilding(),getFloor());
-            FloatView fView=mapLayout.getFloatView();
-            Paint p=new Paint();
-            p.setColor(Color.RED);
-            p.setStyle(Paint.Style.FILL_AND_STROKE);
-            fView.addCircle("hah", Float.valueOf(coordx), Float.valueOf(coordy), 5, p);
+            Log.d(getClass().getName(),building);
+            Log.d(getClass().getName(),floor);
+
         }else{
             new AlertDialog.Builder(this).setTitle("无此Beacon位置")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -94,5 +95,47 @@ public class MapActivity extends Activity {
                         }
                     }).create().show();
         }
+    }
+    public void onChangeMap(View v){
+        mapLayout.changedbmap(getBuilding(), getFloor());
+        /*FloatView fView=mapLayout.getFloatView();
+        Paint p=new Paint();
+        p.setColor(Color.RED);
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        fView.addCircle("hah", Float.valueOf(coordx), Float.valueOf(coordy), 1, p);
+        */
+        Paint paintEmptyB = new Paint();
+        paintEmptyB.setStyle(Paint.Style.FILL);
+        paintEmptyB.setColor(Color.BLUE);
+        paintEmptyB.setAlpha(20);
+
+        Paint paintEmptyc = new Paint();
+        paintEmptyc.setStyle(Paint.Style.FILL);
+        paintEmptyc.setColor(Color.BLACK);
+
+
+
+        Paint paintCricleB = new Paint();
+        paintCricleB.setStyle(Paint.Style.STROKE);
+        paintCricleB.setColor(Color.BLUE);
+
+        mapLayout.getFloatView().addCircle("ha",
+                Float.valueOf(coordx),
+                Float.valueOf(coordy),
+                5,
+                paintCricleB);
+
+        mapLayout.getFloatView()
+                .addCircle("hah",
+                        Float.valueOf(coordx),
+                        Float.valueOf(coordy),
+                        5,
+                        paintEmptyB);
+        mapLayout.getFloatView()
+                .addCircle("h",
+                        Float.valueOf(coordx),
+                        Float.valueOf(coordy),
+                        1,
+                        paintEmptyc);
     }
 }

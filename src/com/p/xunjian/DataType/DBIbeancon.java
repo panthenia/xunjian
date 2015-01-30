@@ -22,6 +22,15 @@ public class DBIbeancon extends IBeacon {
     String adress = "";
     String coordx = "";
 
+    public String getBeaconDeployType() {
+        return beaconDeployType;
+    }
+
+    public void setBeaconDeployType(String beaconDeployType) {
+        this.beaconDeployType = beaconDeployType;
+    }
+
+    String beaconDeployType = "";
     public String getStatus() {
         return status;
     }

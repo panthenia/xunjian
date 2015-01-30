@@ -185,7 +185,7 @@ public class PublicData extends Application {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-             cursor = db1.rawQuery(getString(R.string.get_db_beacon)+" where status='已巡检'", null);
+             cursor = db1.rawQuery(getString(R.string.get_db_beacon), null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {//直到返回false说明表中到了数据末尾
                     DBIbeancon ibeacon = new DBIbeancon();
@@ -197,21 +197,26 @@ public class PublicData extends Application {
                     ibeacon.setAddress(cursor.getString(5));
                     ibeacon.setCoordx(cursor.getString(6));
                     ibeacon.setCoordy(cursor.getString(7));
-                    beaconAddressMap.put(cursor.getString(0), cursor.getString(5));
-                    if(!checkBeaconSet.contains(ibeacon.getBluetoothAddress()) && !uploadBeaconSet.contains(ibeacon.getBluetoothAddress()))
-                        waitBeaconDataList.add(ibeacon);
-                    if(uploadBeaconSet.contains(ibeacon.getBluetoothAddress())){
-                        checkedBeaconDataList.add(ibeacon);
+                    ibeacon.setUuid(cursor.getString(8));
+                    ibeacon.setBeaconDeployType(cursor.getString(9));
+                    if(ibeacon.getBeaconDeployType().contains("已部署")) {
+                        beaconAddressMap.put(cursor.getString(0), cursor.getString(5));
+                        if (!checkBeaconSet.contains(ibeacon.getBluetoothAddress()) && !uploadBeaconSet.contains(ibeacon.getBluetoothAddress()))
+                            waitBeaconDataList.add(ibeacon);
+                        if (uploadBeaconSet.contains(ibeacon.getBluetoothAddress())) {
+                            checkedBeaconDataList.add(ibeacon);
+                        }
+                        dbBeaconDataList.add(ibeacon);
+                        dbBeaconMacSet.add(cursor.getString(0));
+                        dbBeaconMap.put(ibeacon.getBluetoothAddress(), ibeacon);
                     }
-                    dbBeaconDataList.add(ibeacon);
-                    dbBeaconMacSet.add(cursor.getString(0));
-                    dbBeaconMap.put(ibeacon.getBluetoothAddress(),ibeacon);
                 }
             }
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
-            cursor.close();
+            if (cursor != null)
+                cursor.close();
             db1.close();
         }
     }
