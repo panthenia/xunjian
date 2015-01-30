@@ -3,6 +3,7 @@ package com.p.xunjian.DataType;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.lef.scanner.IBeacon;
 import com.p.xunjian.Activity.MainActivity;
+import com.p.xunjian.Activity.MapActivity;
 import com.p.xunjian.R;
 
 import java.util.ArrayList;
@@ -21,7 +24,8 @@ import java.util.ArrayList;
 public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.ViewHolder> {
     private ArrayList<IBeacon> mIBeaconDataset;
     private PublicData publicData;
-    private volatile boolean iswork =false;
+    private volatile boolean iswork = false;
+
     public int getShowType() {
         return showType;
     }
@@ -32,30 +36,35 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
 
     private int showType;
     Context context;
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public View myview;
+
         public ViewHolder(View v) {
             super(v);
             myview = v;
         }
     }
-    public boolean isWork(){
+
+    public boolean isWork() {
         return iswork;
     }
+
     // Provide a suitable constructor (depends on the kind of dataset)
     public AroundListAdapter(Context context) {
         mIBeaconDataset = new ArrayList<IBeacon>();
         publicData = PublicData.getInstance();
         this.context = context;
     }
+
     // Create new views (invoked by the layout manager)
     @Override
     public AroundListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                                           int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_new, parent, false);
@@ -63,35 +72,58 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
+
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        TextView tv_major = (TextView)holder.myview.findViewById(R.id.tv_major_val);
-        if(tv_major != null)
+        TextView tv_major = (TextView) holder.myview.findViewById(R.id.tv_major_val);
+        if (tv_major != null)
             tv_major.setText(String.valueOf(mIBeaconDataset.get(position).getMajor()));
-        ImageView rssi_img = (ImageView)holder.myview.findViewById(R.id.rssi_image);
-        if(rssi_img != null)
+        ImageView rssi_img = (ImageView) holder.myview.findViewById(R.id.rssi_image);
+        if (rssi_img != null)
             rssi_img.setImageResource(getRSSIView(mIBeaconDataset.get(position)));
-        TextView tv_minor = (TextView)holder.myview.findViewById(R.id.tv_minor_val);
-        if(tv_minor != null)
+        TextView tv_minor = (TextView) holder.myview.findViewById(R.id.tv_minor_val);
+        if (tv_minor != null)
             tv_minor.setText(String.valueOf(mIBeaconDataset.get(position).getMinor()));
-        TextView tv_id = (TextView)holder.myview.findViewById(R.id.tv_id);
-        if(tv_id != null){
+        TextView tv_id = (TextView) holder.myview.findViewById(R.id.tv_id);
+        if (tv_id != null) {
             tv_id.setText(PublicData.getInstance().getBeaconAddress(mIBeaconDataset.get(position)));
         }
-        ImageView check_img = (ImageView)holder.myview.findViewById(R.id.check_img);
-        ImageView upload_img = (ImageView)holder.myview.findViewById(R.id.upload_img);
-        if(getShowType() == MainActivity.WAIT){
+        ImageView local_img = (ImageView) holder.myview.findViewById(R.id.local_img);
+
+        local_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (PublicData.getInstance().dbBeaconMacSet.contains(mIBeaconDataset.get(position).getBluetoothAddress())) {
+                    DBIbeancon ibeancon = PublicData.getInstance().dbBeaconMap.get(mIBeaconDataset.get(position).getBluetoothAddress());
+                    if (ibeancon != null) {
+                        Intent intent = new Intent(context, MapActivity.class);
+                        intent.putExtra("building", ibeancon.getBuilding());
+                        intent.putExtra("floor", ibeancon.getFloor());
+                        intent.putExtra("coordx", ibeancon.getCoordx());
+                        intent.putExtra("coordy", ibeancon.getCoordy());
+                        context.startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(context,"无该Beacon地图信息！",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        ImageView check_img = (ImageView) holder.myview.findViewById(R.id.check_img);
+        ImageView upload_img = (ImageView) holder.myview.findViewById(R.id.upload_img);
+        if (getShowType() == MainActivity.WAIT) {
             check_img.setImageDrawable(new ColorDrawable(context.getResources().getColor(android.R.color.transparent)));
             upload_img.setImageDrawable(new ColorDrawable(context.getResources().getColor(android.R.color.transparent)));
-        }else {
-            if(publicData.uploadBeaconSet.contains(mIBeaconDataset.get(position).getBluetoothAddress())){
+        } else {
+
+            if (publicData.uploadBeaconSet.contains(mIBeaconDataset.get(position).getBluetoothAddress())) {
                 upload_img.setImageResource(R.drawable.upload);
                 check_img.setImageResource(R.drawable.checkgou);
                 check_img.setOnClickListener(null);
-            }else{
+            } else {
                 upload_img.setImageDrawable(new ColorDrawable(context.getResources().getColor(android.R.color.transparent)));
                 if (publicData.checkBeaconSet.contains(mIBeaconDataset.get(position).getBluetoothAddress())) {
                     check_img.setImageResource(R.drawable.checkgou);
@@ -104,10 +136,10 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
                             publicData.add2WaitList(mIBeaconDataset.get(position).getBluetoothAddress());
                             publicData.checkBeaconSet.remove(mIBeaconDataset.get(position).getBluetoothAddress());
                             publicData.checkedBeaconDataList.remove(mIBeaconDataset.get(position));
-                            if(publicData.deleteCheckBeacon2Db(mIBeaconDataset.get(position))){
-                                Log.d(AroundListAdapter.class.getName(),"删除ibeacon导数据成功！");
+                            if (publicData.deleteCheckBeacon2Db(mIBeaconDataset.get(position))) {
+                                Log.d(AroundListAdapter.class.getName(), "删除ibeacon导数据成功！");
                             }
-                            if(getShowType() == MainActivity.CHECKED){
+                            if (getShowType() == MainActivity.CHECKED) {
                                 mIBeaconDataset.remove(position);
                                 notifyDataSetChanged();
                             }
@@ -123,16 +155,16 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
                             ImageView view = (ImageView) v;
                             view.setImageResource(R.drawable.checkgou);
 
-                                publicData.removeFromWaitList(mIBeaconDataset.get(position).getBluetoothAddress());
-                                publicData.checkBeaconSet.add(mIBeaconDataset.get(position).getBluetoothAddress());
-                                publicData.checkedBeaconDataList.add(mIBeaconDataset.get(position));
-                                if(publicData.saveCheckBeacon2Db(mIBeaconDataset.get(position))){
-                                    Log.d(AroundListAdapter.class.getName(),"保存巡检ibeacon数据成功！");
-                                }else{
-                                    Log.d(AroundListAdapter.class.getName(),"保存巡检ibeacon数据失败！");
-                                }
+                            publicData.removeFromWaitList(mIBeaconDataset.get(position).getBluetoothAddress());
+                            publicData.checkBeaconSet.add(mIBeaconDataset.get(position).getBluetoothAddress());
+                            publicData.checkedBeaconDataList.add(mIBeaconDataset.get(position));
+                            if (publicData.saveCheckBeacon2Db(mIBeaconDataset.get(position))) {
+                                Log.d(AroundListAdapter.class.getName(), "保存巡检ibeacon数据成功！");
+                            } else {
+                                Log.d(AroundListAdapter.class.getName(), "保存巡检ibeacon数据失败！");
+                            }
                             final IBeacon currentBeacon = mIBeaconDataset.get(position);
-                            String[] blocal = {"正常","新位置"};
+                            String[] blocal = {"正常", "新位置"};
                             new AlertDialog.Builder(context)
                                     .setTitle("选择巡检到的Beacon位置")
                                     .setIcon(android.R.drawable.ic_dialog_info)
@@ -140,11 +172,11 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            if(which == 1){
-                                                View v = LayoutInflater.from(context).inflate(R.layout.new_local,null);
-                                                final EditText ncx = (EditText)v.findViewById(R.id.new_coordx);
-                                                final EditText ncy = (EditText)v.findViewById(R.id.new_coordy);
-                                                final EditText nca = (EditText)v.findViewById(R.id.new_address);
+                                            if (which == 1) {
+                                                View v = LayoutInflater.from(context).inflate(R.layout.new_local, null);
+                                                final EditText ncx = (EditText) v.findViewById(R.id.new_coordx);
+                                                final EditText ncy = (EditText) v.findViewById(R.id.new_coordy);
+                                                final EditText nca = (EditText) v.findViewById(R.id.new_address);
                                                 new AlertDialog.Builder(context)
                                                         .setTitle("输入新位置")
                                                         .setIcon(android.R.drawable.ic_dialog_info)
@@ -155,7 +187,7 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
                                                                 String strncx = ncx.getText().toString();
                                                                 String strncy = ncy.getText().toString();
                                                                 String strnad = nca.getText().toString();
-                                                                PublicData.getInstance().saveBeaconAddress(currentBeacon, strncx,strncy,strnad);
+                                                                PublicData.getInstance().saveBeaconAddress(currentBeacon, strncx, strncy, strnad);
                                                                 dialog.dismiss();
                                                                 iswork = false;
                                                             }
@@ -163,7 +195,7 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
                                                         .create().show();
                                             }
                                         }
-                                    }).setPositiveButton("确认",null)
+                                    }).setPositiveButton("确认", null)
                                     .create().show();
                         }
                     });
@@ -172,13 +204,15 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
         }
 
     }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mIBeaconDataset.size();
     }
+
     private int getRSSIView(IBeacon beacon) {
-        if (beacon.getRssi() <=-110) {
+        if (beacon.getRssi() <= -110) {
             return R.drawable.icon_rssi1;
         } else if (beacon.getRssi() <= -100) {
             return R.drawable.icon_rssi2;
@@ -193,11 +227,17 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
         }
         return R.drawable.icon_rssi1;
     }
-    public void updateIBeaconData(ArrayList<IBeacon> data){
+
+    public void updateIBeaconData(ArrayList<IBeacon> data) {
         ArrayList<IBeacon> newData = new ArrayList<IBeacon>();
         newData.addAll(data);
         mIBeaconDataset = newData;
     }
 
+    public Object getDataItem(int p) {
+        if (p < mIBeaconDataset.size())
+            return mIBeaconDataset.get(p);
+        else return null;
+    }
 
 }

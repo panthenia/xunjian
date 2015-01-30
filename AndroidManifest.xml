@@ -34,6 +34,7 @@
         <activity android:name=".Activity.NetworkActivity"
                 android:theme="@android:style/Theme.Holo.Light"
                 />
+        <activity android:name=".Activity.MapActivity"/>
 
         <service android:name="com.p.xunjian.Util.NetWorkService"/>
         <!-- sdk服务 -->

@@ -24,6 +24,14 @@
                 android:layout_alignStart="@id/tv_rssi_label"
                 android:layout_below="@id/tv_rssi_label"
                 android:contentDescription="icon"/>
+        <ImageView
+                android:id="@+id/local_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/rssi_image"
+                android:src="@drawable/da_marker_red"
+                android:layout_marginLeft="30dp"
+                android:layout_toEndOf="@+id/rssi_image"/>
         <TextView
                 android:layout_width="wrap_content"
                 android:id="@+id/tv_major_label"
@@ -77,14 +85,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="10dp"
                 android:layout_toEndOf="@+id/tv_major_label"/>
         <ImageView
                 android:id="@+id/upload_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:layout_toEndOf="@+id/check_img"/>
+
 </RelativeLayout>
 

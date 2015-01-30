@@ -1,9 +1,9 @@
 package com.p.xunjian.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -29,7 +29,10 @@ import com.p.xunjian.DataType.PublicData;
 import com.p.xunjian.R;
 import com.p.xunjian.Util.NetWorkService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * Created by p on 2015/1/19.
@@ -103,17 +106,13 @@ public class MainActivity extends Activity implements
                 default:
                     break;
             }
-        };
-    };
-    Comparator<IBeacon> comparator = new Comparator<IBeacon>() {
-        @Override
-        public int compare(IBeacon lhs, IBeacon rhs) {
-            return  rhs.getRssi() -lhs.getRssi();
         }
     };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getActionBar().setTitle("周围的Beacons");
         int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
         if (actionBarTitleId > 0) {
@@ -135,6 +134,10 @@ public class MainActivity extends Activity implements
         btAround.setTextColor(Color.rgb(0xff,0xff,0xff));
         showType = AROUND;
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        //mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+        //    @Override public void onItemClick(View view, int position) {
+        //    }
+        //}));
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);

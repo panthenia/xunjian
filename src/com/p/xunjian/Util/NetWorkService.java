@@ -146,10 +146,8 @@ public class NetWorkService extends IntentService {
                             jsonObject.put("address", ibeacon.getAddress());
                             jsonObject.put("latitude", "");
                             jsonObject.put("longitude", "");
-                            if (publicData.dbBeaconDataList.contains(ibeacon.getBluetoothAddress())) {
-                                jsonObject.put("type", "2");
-                            } else jsonObject.put("type", "3");
-                            jsonObject.put("status", "1");
+                            jsonObject.put("status", ibeacon.getStatus());
+                            jsonObject.put("type", "1");
                             jsonArray.put(jsonObject);
                         }
                         JSONObject finalJson = new JSONObject();
@@ -189,7 +187,7 @@ public class NetWorkService extends IntentService {
                             if (rejson.getString("message").contains("数据格式错误")) {
                                 msg.what = MainActivity.REQUEST_FINISH_FAIL;
                                 ahandler.sendMessage(msg);
-                            } else if (rejson.getString("message").contains("key_time_out")) {
+                            } else if (rejson.getString("message").contains("tempid_time_out")) {
                                 msg.what = MainActivity.KEY_TIME_OUT;
                                 ahandler.sendMessage(msg);
                             }
@@ -203,6 +201,12 @@ public class NetWorkService extends IntentService {
                     }
 
                 } else if (rtype.contains("login")) {//登录
+                    Log.d(getClass().getName(),"开始登录："+LOGIN_URL);
+                    //test
+                    //message.what = LoginActivity.LOGIN_SUCCESS;
+                    //PublicData.getInstance().setKey("asdasdasdf-asdasd-dfdf");
+                    //ahandler.sendMessage(message);
+                    //test
                     String id = PublicData.getInstance().getUser();
                     String psw = PublicData.getInstance().getPsw();
                     String data = String.format("user_id=%s&pwd=%s", id, PublicData.getInstance().getMd5(psw));
@@ -298,7 +302,7 @@ public class NetWorkService extends IntentService {
                             if (rejson.getString("message").contains("数据格式错误")) {
                                 msg.what = MainActivity.UPLOAD_WAIT_FAIL;
                                 ahandler.sendMessage(msg);
-                            } else if (rejson.getString("message").contains("key_time_out")) {
+                            } else if (rejson.getString("message").contains("tempid_time_out")) {
                                 msg.what = MainActivity.KEY_TIME_OUT;
                                 ahandler.sendMessage(msg);
                             }

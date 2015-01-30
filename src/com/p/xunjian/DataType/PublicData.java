@@ -161,7 +161,7 @@ public class PublicData extends Application {
         return dbIbeancons;
     }
     public void saveBeaconAddress(IBeacon iBeacon,String x,String y,String ad){
-        String sql = String.format("update unupbeacon set coord_x='%s',coord_y='%s',address='%s' where mac_id='%s'",x,y,ad,iBeacon.getBluetoothAddress());
+        String sql = String.format("update unupbeacon set coord_x='%s',coord_y='%s',address='%s',status='3' where mac_id='%s'",x,y,ad,iBeacon.getBluetoothAddress());
         SQLiteDatabase db = du.getReadableDatabase();
 
         try {
@@ -332,10 +332,10 @@ public class PublicData extends Application {
                 floor = dbIbeancon.getFloor();
             }
         }
-        sql = "insert into unupbeacon(isour,mac_id,uuid,major,minor,rssi,coord_x,coord_y,address,building,floor) values('";
+        sql = "insert into unupbeacon(isour,mac_id,uuid,major,minor,rssi,coord_x,coord_y,address,building,floor,status) values('";
         sql += beaconType + "','" + iBeacon.getBluetoothAddress() + "','" + iBeacon.getProximityUuid()
                 + "','" + iBeacon.getMajor() + "','" + iBeacon.getMinor() + "','" + iBeacon.getRssi()
-                + "','"+coordx+"','"+coordy+"','"+address+"','"+building+"','"+floor+"')";
+                + "','"+coordx+"','"+coordy+"','"+address+"','"+building+"','"+floor+"','"+"2"+"')";
 
         try {
             db.execSQL(sql);
@@ -372,6 +372,7 @@ public class PublicData extends Application {
                     ibeacon.setCoordx(cursor.getString(cursor.getColumnIndex("coord_x")));
                     ibeacon.setCoordy(cursor.getString(cursor.getColumnIndex("coord_y")));
                     ibeacon.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+                    ibeacon.setStatus(cursor.getString(cursor.getColumnIndex("status")));
                     beacons.add(ibeacon);
                 }
             }
