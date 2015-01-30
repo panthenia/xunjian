@@ -23,9 +23,11 @@ import com.p.xunjian.DataType.PublicData;
 import com.p.xunjian.R;
 import com.p.xunjian.Util.NetWorkService;
 
+/**
+ * 登录的activity
+ */
 public class LoginActivity extends Activity {
     ProgressDialog pro_dialog;
-    public final static int LOGINACTIVITY_LABEL = 1;
     public final static int LOGIN_SUCCESS = 2;
     public final static int SERVER_ERR = 3;
     public final static int LOGIN_FAIL_NO_ACCOUNT = 4;

@@ -38,7 +38,6 @@
             android:background="@drawable/button_shape"
             android:textColor="#ffffff"
             android:layout_marginTop="30dp"
-            android:onClick="onLoginClick"
             android:text="登录"
             />
     <TextView

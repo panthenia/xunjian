@@ -36,7 +36,6 @@
             android:background="@drawable/button_shape"
             android:textColor="#ffffff"
             android:layout_marginTop="30dp"
-            android:onClick="onSaveClick"
             android:text="保存"
             />
 
