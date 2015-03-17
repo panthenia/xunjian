@@ -18,6 +18,7 @@ import com.p.xunjian.Util.SdDbHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,7 +104,8 @@ public class PublicData extends Application {
     public ConcurrentHashMap<String,DBIbeancon> dbBeaconMap = new ConcurrentHashMap<String, DBIbeancon>();
 
     //标记巡检到的beacon
-    public ArrayList<IBeacon> checkedBeaconDataList = new ArrayList<IBeacon>();
+    public ArrayList<DBIbeancon> checkedBeaconDataList = new ArrayList<DBIbeancon>();
+    public HashMap<String,DBIbeancon> checkedBeaconMap = new HashMap<String, DBIbeancon>();
     public HashSet<String> uploadBeaconSet = new HashSet<String>();
     public HashSet<String> checkBeaconSet = new HashSet<String>();
 
@@ -126,7 +128,50 @@ public class PublicData extends Application {
         getDeployedBeaconInAssestsDb();
 
     }
-
+    public DBIbeancon hasLocation(String mac){
+        DBIbeancon ibeancon = null;
+        if(dbBeaconMap.containsKey(mac)){
+            ibeancon = dbBeaconMap.get(mac);
+            return ibeancon;
+        }
+        if(checkedBeaconMap.containsKey(mac)){
+            ibeancon = checkedBeaconMap.get(mac);
+            return ibeancon;
+        }
+        return null;
+    }
+    public boolean saveLocation(String mac,String b,String f,String des,float x,float y){
+        String sql = String.format("update unupbeacon set building='%s',floor='%s', coord_x='%s',coord_y='%s',address='%s',status='3' where mac_id='%s'",b,f,x,y,des,mac);
+        SQLiteDatabase db = du.getReadableDatabase();
+        boolean result = true;
+        try {
+            db.execSQL(sql);
+        }catch (SQLException e){
+            e.printStackTrace();
+            result = false;
+        }finally {
+            db.close();
+        }
+        DBIbeancon ibeancon = dbBeaconMap.get(mac);
+        if(ibeancon != null){
+            ibeancon.setBuilding(b);
+            ibeancon.setFloor(f);
+            ibeancon.setAddress(des);
+            ibeancon.setCoordx(String.valueOf(x));
+            ibeancon.setCoordy((String.valueOf(y)));
+            dbBeaconMap.put(mac,ibeancon);
+        }
+        ibeancon = checkedBeaconMap.get(mac);
+        if(ibeancon != null){
+            ibeancon.setBuilding(b);
+            ibeancon.setFloor(f);
+            ibeancon.setAddress(des);
+            ibeancon.setCoordx(String.valueOf(x));
+            ibeancon.setCoordy((String.valueOf(y)));
+            dbBeaconMap.put(mac,ibeancon);
+        }
+        return  result;
+    }
     public String getMd5(String data){
 
         md5_encriptor.reset();
@@ -145,13 +190,35 @@ public class PublicData extends Application {
 
         return md5StrBuff.toString();
     }
-    public String getBeaconAddress(IBeacon beacon) {
-        if (beacon instanceof DBIbeancon) {
-            return ((DBIbeancon) beacon).getAddress();
-        } else {
-            return beaconAddressMap.get(beacon.getBluetoothAddress()) == null ? "未知" : beaconAddressMap.get(beacon.getBluetoothAddress());
-        }
+
+    public boolean isHas_save_user() {
+        return has_save_user;
     }
+
+    public void setHas_save_user(boolean has_save_user) {
+        this.has_save_user = has_save_user;
+    }
+
+    private boolean has_save_user;
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
+    }
+
+    boolean login = false;
+    public String getBeaconAddress(IBeacon beacon) {
+        if(beaconAddressMap.containsKey(beacon.getBluetoothAddress())){
+            return beaconAddressMap.get(beacon.getBluetoothAddress());
+        }
+        if(checkedBeaconMap.containsKey(beacon.getBluetoothAddress())){
+            return checkedBeaconMap.get(beacon.getBluetoothAddress()).getAddress();
+        }
+        return "未知";
+    }
+    public HashSet<String> beaconShelter = new HashSet<String>();
     public ArrayList<DBIbeancon> getWaitBeaconData(){
         ArrayList<DBIbeancon> dbIbeancons = new ArrayList<DBIbeancon>();
         for(IBeacon iBeacon : waitBeaconDataList){
@@ -160,19 +227,7 @@ public class PublicData extends Application {
         }
         return dbIbeancons;
     }
-    public void saveBeaconAddress(IBeacon iBeacon,String x,String y,String ad){
-        String sql = String.format("update unupbeacon set coord_x='%s',coord_y='%s',address='%s',status='3' where mac_id='%s'",x,y,ad,iBeacon.getBluetoothAddress());
-        SQLiteDatabase db = du.getReadableDatabase();
 
-        try {
-            db.execSQL(sql);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }finally {
-
-            db.close();
-        }
-    }
     /**
      */
     public void getDeployedBeaconInAssestsDb() {
@@ -249,9 +304,15 @@ public class PublicData extends Application {
                     ibeacon.setMac(cursor.getString(cursor.getColumnIndex("mac_id")));
                     ibeacon.setMajor(cursor.getString(cursor.getColumnIndex("major")));
                     ibeacon.setMinor(cursor.getString(cursor.getColumnIndex("minor")));
-                    ibeacon.setRssi(cursor.getString(cursor.getColumnIndex("rssi")));
+                    ibeacon.setRssi(Integer.valueOf(cursor.getString(cursor.getColumnIndex("rssi"))));
+                    ibeacon.setBuilding(cursor.getString(cursor.getColumnIndex("building")));
+                    ibeacon.setFloor(cursor.getString(cursor.getColumnIndex("floor")));
+                    ibeacon.setCoordx(cursor.getString(cursor.getColumnIndex("coord_x")));
+                    ibeacon.setCoordy(cursor.getString(cursor.getColumnIndex("coord_y")));
+                    ibeacon.setAddress(cursor.getString(cursor.getColumnIndex("address")));
                     checkedBeaconDataList.add(ibeacon);
                     checkBeaconSet.add(ibeacon.getBluetoothAddress());
+                    checkedBeaconMap.put(ibeacon.getBluetoothAddress(),ibeacon);
                 }
             }
         }catch (SQLException e){
@@ -277,6 +338,7 @@ public class PublicData extends Application {
         uploadBeaconSet.clear();
         waitBeaconDataList.clear();
         waitBeaconDataList.addAll(dbBeaconDataList);
+        checkedBeaconMap.clear();
         SQLiteDatabase db = du.getReadableDatabase();
         try {
             db.execSQL(uploaded_sql);
@@ -371,7 +433,7 @@ public class PublicData extends Application {
                     ibeacon.setMajor(cursor.getString(cursor.getColumnIndex("major")));
                     ibeacon.setMinor(cursor.getString(cursor.getColumnIndex("minor")));
                     ibeacon.setIsour(cursor.getString(cursor.getColumnIndex("isour")));
-                    ibeacon.setRssi(cursor.getString(cursor.getColumnIndex("rssi")));
+                    ibeacon.setRssi(Integer.valueOf(cursor.getString(cursor.getColumnIndex("rssi"))));
                     ibeacon.setUuid(cursor.getString(cursor.getColumnIndex("uuid")));
                     ibeacon.setBuilding(cursor.getString(cursor.getColumnIndex("building")));
                     ibeacon.setCoordx(cursor.getString(cursor.getColumnIndex("coord_x")));

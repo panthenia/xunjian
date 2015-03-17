@@ -189,6 +189,7 @@ public class NetWorkService extends IntentService {
                                 ahandler.sendMessage(msg);
                             } else if (rejson.getString("message").contains("tempid_time_out")) {
                                 msg.what = MainActivity.KEY_TIME_OUT;
+                                msg.arg1 = MainActivity.UPLOAD_TYPE_CHECKED;
                                 ahandler.sendMessage(msg);
                             }
                         }
@@ -307,6 +308,7 @@ public class NetWorkService extends IntentService {
                                 ahandler.sendMessage(msg);
                             } else if (rejson.getString("message").contains("tempid_time_out")) {
                                 msg.what = MainActivity.KEY_TIME_OUT;
+                                msg.arg1 = MainActivity.UPLOAD_TYPE_UNCHECKED;
                                 ahandler.sendMessage(msg);
                             }
                         }

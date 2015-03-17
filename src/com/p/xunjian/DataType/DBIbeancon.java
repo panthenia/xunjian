@@ -9,6 +9,13 @@ public class DBIbeancon extends IBeacon {
     public DBIbeancon(){
         proximityUuid = "";
     }
+    public DBIbeancon(IBeacon iBeacon){
+        setUuid(iBeacon.getProximityUuid());
+        setMac(iBeacon.getBluetoothAddress());
+        setMajor(iBeacon.getMajor());
+        setMinor(iBeacon.getMinor());
+        setRssi(iBeacon.getRssi());
+    }
     public String getAdress() {
         return adress;
     }
@@ -44,7 +51,7 @@ public class DBIbeancon extends IBeacon {
         return isour;
     }
 
-    public void setRssi(String rssi) {
+    public void setRssi(int rssi) {
         this.rssi = rssi;
     }
 
@@ -58,7 +65,7 @@ public class DBIbeancon extends IBeacon {
     }
 
     public String uuid = "";
-    public String rssi = "";
+
     public void setIsour(String isour) {
         this.isour = isour;
     }

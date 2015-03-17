@@ -3,20 +3,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".MapActivity" >
+    <LinearLayout
+            android:id="@+id/liner_bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
+        <Button
+                android:id="@+id/bt_show"
+                android:layout_weight="1"
+                android:text="显示位置"
+                android:onClick="onChangeMap"
+                android:textColor="#ffffff"
+                android:background="@drawable/backcolor_norock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        <Button
+                android:id="@+id/bt_detail"
+                android:layout_weight="1"
+                android:text="修改备注"
+                android:textColor="#ffffff"
+                android:onClick="onDescription"
+                android:background="@drawable/backcolor_norock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        <Button
+                android:id="@+id/bt_save"
+                android:layout_weight="1"
+                android:text="保存信息"
+                android:onClick="onSaveMap"
+                android:textColor="#ffffff"
+                android:background="@drawable/backcolor_norock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
     <com.wxq.draw.MapControler
             android:id="@+id/mapLayout"
+            android:layout_above="@id/liner_bottom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFCFCFCF" />
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="显示当前Beancon位置"
-            android:id="@+id/button"
-            android:onClick="onChangeMap"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#55333333"
+    android:orientation="horizontal"
+    android:gravity="center">
+
+
+        <Button
+            android:id="@+id/bt_locates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:text="设置新位置"
+            android:textColor="#ffffff"
+            android:background="@drawable/backcolor_norock"
+            />
+
+
+</LinearLayout>

@@ -13,4 +13,12 @@
           android:title="@string/clear_upload"
           android:showAsAction="never"
             />
+    <item android:id="@+id/action_Shelter"
+          android:title="@string/shelter_beacon"
+          android:showAsAction="never"
+          />
+    <item android:id="@+id/clear_Shelter"
+          android:title="@string/clear_shelter"
+          android:showAsAction="never"
+            />
 </menu>

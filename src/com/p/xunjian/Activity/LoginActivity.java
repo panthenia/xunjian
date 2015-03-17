@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.p.xunjian.DataType.PublicData;
 import com.p.xunjian.R;
 import com.p.xunjian.Util.NetWorkService;
+
 
 /**
  * 登录的activity
@@ -56,13 +58,17 @@ public class LoginActivity extends Activity {
         getSavedInfo();
         act_et = (EditText)findViewById(R.id.tv_act);
         psd_et = (EditText)findViewById(R.id.tv_psd);
+        if(PublicData.getInstance().isHas_save_user()){
+            act_et.setText(PublicData.getInstance().getUser());
+            psd_et.setText(PublicData.getInstance().getPsw());
+        }
         mhandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == LOGIN_SUCCESS){
-                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(intent);
                     pro_dialog.dismiss();
+                    PublicData.getInstance().setLogin(true);
+                    setResult(5);
                     finish();
                 }else if(msg.what == LOGIN_FAIL_NO_ACCOUNT || msg.what == LOGIN_FAIL_ALREADY_LOGIN
                         || msg.what == LOGIN_FAIL_NO_ACCOUNT_AND_PSW || msg.what == SERVER_ERR){
@@ -119,6 +125,7 @@ public class LoginActivity extends Activity {
                     if(user.length() > 0 && psw.length() > 0){
                         PublicData.getInstance().setUser(user);
                         PublicData.getInstance().setPsw(psw);
+                        saveLoginInfo();
                         startService(intent);
                     }else{
                         pro_dialog.dismiss();
@@ -132,6 +139,28 @@ public class LoginActivity extends Activity {
             }
         });
     }
+    public void saveLoginInfo(){
+        SharedPreferences ps = getSharedPreferences(getResources().getString(R.string.login_preference_name),MODE_PRIVATE);
+        SharedPreferences.Editor editor = ps.edit();
+        editor.clear();
+        editor.putBoolean("SaveInfo",true);
+        editor.putString("Ip",PublicData.getInstance().getIp());
+        editor.putString("Port",PublicData.getInstance().getPort());
+        editor.putBoolean("SaveUser",true);
+        editor.putString("User",PublicData.getInstance().getUser());
+        editor.putString("Psw",PublicData.getInstance().getPsw());
+        editor.commit();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            setResult(2);
+            finish();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void onServerChange(View v){
         Log.d(getClass().getName(),"点击textview");
         Intent intent = new Intent(LoginActivity.this,NetworkActivity.class);
@@ -141,8 +170,14 @@ public class LoginActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences(getResources().getString(R.string.login_preference_name),MODE_PRIVATE);
         if(preferences.getBoolean("SaveInfo", false)){
             PublicData.getInstance().setIp(preferences.getString("Ip",""));
-            PublicData.getInstance().setPort(preferences.getString("Port",""));
+            PublicData.getInstance().setPort(preferences.getString("Port", ""));
             PublicData.getInstance().setHas_save_ip(true);
         }else PublicData.getInstance().setHas_save_ip(false);
+        if(preferences.getBoolean("SaveUser", false)){
+            PublicData.getInstance().setUser(preferences.getString("User", ""));
+            PublicData.getInstance().setPsw(preferences.getString("Psw", ""));
+            PublicData.getInstance().setHas_save_user(true);
+        }else PublicData.getInstance().setHas_save_user(false);
+
     }
 }

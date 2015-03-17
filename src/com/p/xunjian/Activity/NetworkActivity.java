@@ -3,24 +3,18 @@ package com.p.xunjian.Activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.p.xunjian.DataType.PublicData;
 import com.p.xunjian.R;
+
 
 public class NetworkActivity extends Activity {
 
@@ -47,6 +41,10 @@ public class NetworkActivity extends Activity {
         Button button = (Button) findViewById(R.id.bt_login);
         act_et = (EditText)findViewById(R.id.tv_act);
         psd_et = (EditText)findViewById(R.id.tv_psd);
+        if(PublicData.getInstance().isHas_save_ip()){
+            act_et.setText(PublicData.getInstance().getIp());
+            psd_et.setText(PublicData.getInstance().getPort());
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +54,6 @@ public class NetworkActivity extends Activity {
                     PublicData.getInstance().setIp(ip);
                     PublicData.getInstance().setPort(port);
                     PublicData.getInstance().setHas_save_ip(true);
-                    saveLoginInfo();
                     finish();
                 }else {
                     new AlertDialog.Builder(NetworkActivity.this)
@@ -67,13 +64,5 @@ public class NetworkActivity extends Activity {
             }
         });
     }
-    public void saveLoginInfo(){
-        SharedPreferences ps = getSharedPreferences(getResources().getString(R.string.login_preference_name),MODE_PRIVATE);
-        SharedPreferences.Editor editor = ps.edit();
-        editor.clear();
-        editor.putBoolean("SaveInfo",true);
-        editor.putString("Ip",ip);
-        editor.putString("Port",port);
-        editor.commit();
-    }
+
 }
